@@ -14,7 +14,7 @@ Rebuilding Macro Paradise
 
 # This presentation
 
-https://github.com/DmytroMitin/macroparadise-london-scala-talk-09-2026
+https://github.com/DmytroMitin/macroparadise-talk-09-2026
 
 QR code?
 
