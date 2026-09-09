@@ -1,12 +1,12 @@
-# Draft v6
+# Draft v8
 
-This is a sixth additive revision of the talk draft.
+This is an eighth additive revision of the talk draft.
 
 Goals of this version:
 
-- keep `draft.md`, `draft_v2.md`, `draft_v3.md`, `draft_v4.md`, and `draft_v5.md` as historical checkpoints;
+- keep `draft.md`, `draft_v2.md`, `draft_v3.md`, `draft_v4.md`, `draft_v5.md`, `draft_v6.md`, and `draft_v7.md` as historical checkpoints;
 - preserve the information and examples already collected rather than shortening the talk yet;
-- keep the narrative improvements from v5;
+- keep the narrative improvements and parsing update from v7;
 - distinguish Scala 3 **standard plugins**, Scala 3 **research plugins**, and Scala 2 **analyzer-plugin hooks** accurately;
 - preserve the fact that current Macro-Paradise is implemented as a Scala 3 `StandardPlugin`, despite its unusual pre-typer placement;
 - explain more precisely why the current Scala 3 design does not need to participate inside ordinary namer/typer while Scala 2 Macro Paradise did;
@@ -18,6 +18,7 @@ Goals of this version:
 - distinguish released examples from current-`main` / `0.2.0-SNAPSHOT` examples where that matters;
 - retain historical/prototype APIs when they are useful, but label them as such;
 - explain the Quasiquotes Q/N/U-D/U-U/C vocabulary in one place rather than assuming it.
+- explain that a possible inheritance-based macro-annotation syntax does not by itself require deeper namer/typer integration; the decisive issue is whether the expander implementation is already compiled and how much semantic resolution we require before expansion.
 
 The final slide deck can be much shorter. This file is still a content pool / speaker draft, not a final slide-count commitment.
 
@@ -1304,6 +1305,159 @@ class myAnnotation extends SomeFutureSuperParadiseAnnotationExpander:
   )(using Contexts.Context): ExpansionOutcome =
     ...
 ```
+
+## Would this future syntax require deeper namer / typer integration?
+
+Not by itself.
+
+The **surface syntax** and the **compiler-integration depth** are separate design decisions.
+
+If `myAnnotation` is already compiled when the annotated consumer is compiled, the inheritance-based syntax can still fit the current pre-typer architecture:
+
+```text
+compile myAnnotation first
+    |
+    v
+compiled class
+  - is an annotation marker
+  - implements the Macro-Paradise expansion protocol
+    |
+    v
+compile consumer
+    |
+    v
+@myAnnotation
+class A
+    |
+    v
+Macro-Paradise loads the already compiled annotation / expander
+    |
+    v
+expand untpd
+    |
+    v
+ordinary Dotty typer
+```
+
+In that model the annotation class itself could conceptually combine the roles that are currently split between:
+
+```text
+Scala annotation marker
+    +
+@expander("...Handler") metadata
+    +
+precompiled ExpansionHandler
+```
+
+So the nicer syntax does **not** imply that the pre-typer phase must start participating inside typer.
+
+The situation changes when the expander is source-defined in the same compilation.
+
+### Precompiled annotation / expander
+
+```scala
+// already compiled dependency
+class myAnnotation extends SomeFutureSuperParadiseAnnotationExpander:
+  def expand(...) = ...
+```
+
+No deeper namer/typer integration is inherently required. Macro-Paradise can load the compiled class before typing the consumer.
+
+### Same module, different file
+
+```text
+Annotation.scala
+  class myAnnotation extends SomeFutureSuperParadiseAnnotationExpander ...
+
+User.scala
+  @myAnnotation
+  class A
+```
+
+This creates a staging problem, but deeper analyzer integration is still not the only solution.
+
+The existing bounded same-module approach points to another strategy:
+
+```text
+identify the handler source
+  -> suspend dependent consumers
+  -> compile the handler
+  -> load the freshly compiled handler
+  -> resume consumers
+  -> run the pre-typer transformation
+```
+
+So same-module support can still preserve the overall rule:
+
+> expansion code must become executable before the annotated consumer reaches Macro-Paradise.
+
+### Same file
+
+The difficult case is conceptually:
+
+```scala
+class myAnnotation extends SomeFutureSuperParadiseAnnotationExpander:
+  def expand(...) = ...
+
+@myAnnotation
+class A
+```
+
+Now there is a bootstrap cycle:
+
+```text
+we need myAnnotation compiled
+to execute @myAnnotation
+
+but myAnnotation belongs to the compilation unit
+that we want to transform before ordinary typer
+```
+
+Possible designs include:
+
+- special suspension / sub-compilation;
+- source splitting / staging;
+- continuing to reject this topology;
+- or deeper integration with naming / typing.
+
+Here deeper compiler integration becomes **more attractive**, but it is still a design choice rather than a consequence of the inheritance syntax itself.
+
+### Semantic recognition of the superclass
+
+There is another independent question.
+
+Before typer, from raw syntax:
+
+```scala
+class myAnnotation extends SomeFutureSuperParadiseAnnotationExpander
+```
+
+we can see what the source *spells*, but we do not automatically know the fully resolved semantic symbol of that parent.
+
+If the framework accepts a bounded syntactic/import-aware rule, analogous to the current annotation-identity model, the pre-typer design can remain independent of ordinary typer.
+
+If instead we want full Scala semantic resolution here — arbitrary aliases, imports, inherited relationships, type aliases, etc. — then namer/typer integration becomes much more relevant.
+
+So the design space is:
+
+```text
+future direct syntax
+    |
+    +-- annotation / expander already compiled
+    |     -> current pre-typer StandardPlugin model is enough
+    |
+    +-- same module, different file
+    |     -> suspension / precompilation can still be enough
+    |
+    +-- same file / arbitrary source-defined expander
+    |     -> bootstrap problem
+    |     -> deeper compiler integration becomes attractive
+    |
+    +-- require full semantic resolution before expansion
+          -> namer / typer integration becomes more relevant
+```
+
+This also explains one architectural benefit of the current `@expander` design: although more indirect syntactically, it deliberately keeps the broad/default pre-typer dependency graph acyclic by pointing from an already compiled marker to already compiled executable expansion code.
 
 Conceptually similar to native Scala 3:
 
