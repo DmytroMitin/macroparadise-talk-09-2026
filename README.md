@@ -8,6 +8,8 @@ Draft (v. 8): [MD](draft/draft_v8.md)
 
 Meetup: https://www.meetup.com/london-scala/events/316153466/
 
+Live stream: https://3ds.zoom.us/j/85822609353?pwd=Lrv4H5qEJQkCr6rJf1YzwZKdg95VJc.1
+
 Repositories:
 
 - https://github.com/DmytroMitin/macroparadise-scala3
