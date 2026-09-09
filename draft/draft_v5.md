@@ -1,16 +1,17 @@
-# Draft v4
+# Draft v5
 
-This is a fourth additive revision of the talk draft.
+This is a fifth additive revision of the talk draft.
 
 Goals of this version:
 
-- keep `draft.md`, `draft_v2.md`, and `draft_v3.md` as historical checkpoints;
+- keep `draft.md`, `draft_v2.md`, `draft_v3.md`, and `draft_v4.md` as historical checkpoints;
 - preserve the information and examples already collected rather than shortening the talk yet;
-- keep the narrative improvements from v3;
+- keep the narrative improvements from v4;
 - distinguish Scala 3 **standard plugins**, Scala 3 **research plugins**, and Scala 2 **analyzer-plugin hooks** accurately;
 - preserve the fact that current Macro-Paradise is implemented as a Scala 3 `StandardPlugin`, despite its unusual pre-typer placement;
-- explain that Scala 2 Macro Paradise was loaded as an ordinary `nsc` plugin but registered `AnalyzerPlugin` and `MacroPlugin` hooks in the analyzer;
-- restore the original numbered “walk by trees” diagram and Level 0–4 terminology; its arrows mean directions of our walk through representations, not compiler phase order;
+- explain why a `StandardPlugin` is enough for the current Scala 3 Macro-Paradise design, and why Scala 2 Macro Paradise needed analyzer/macro plugin hooks;
+- explain parsing as a middle ground between manual AST construction and quasiquotes;
+- preserve the original numbered “walk by trees” diagram and Level 0–4 terminology; its arrows mean directions of our walk through representations, not compiler phase order;
 - preserve the separate compiler-phase-direction diagram as complementary information;
 - distinguish released examples from current-`main` / `0.2.0-SNAPSHOT` examples where that matters;
 - retain historical/prototype APIs when they are useful, but label them as such;
@@ -290,7 +291,9 @@ Instead of manually spelling tree constructors, for example conceptually:
 Apply(Select(left, "+"), List(right))
 ```
 
-we can write source-like syntax:
+A middle ground is **parsing source text into a tree**: Scala 2 macros exposed `c.parse(...)`; our ordinary Scala 3 frontend uses Dotty's parser through `Scala3ParserBridge` (with `TinyTermParser` / `TinyTypeParser` façades), while our hybrid frontend is Scalameta-primary and falls back to the current Dotty frontend only when Scalameta itself fails to parse the source.
+
+Parsing turns text into AST structure, but structural holes/splices still need separate substitution or rewriting. Quasiquotes make those holes part of the tree template itself:
 
 ```scala
 q"$left + $right"
@@ -398,6 +401,8 @@ analyzer.addMacroPlugin(MacroPlugin)
 So Macro Paradise was not merely a conventional extra-phase plugin. Its macro-annotation implementation relied on Scala 2 analyzer / macro plugin extension hooks inside naming and typing. In that sense, saying that Scala 2 Macro Paradise used **analyzer-plugin-based machinery** is correct, even though the outer JAR/plugin entry point was still an ordinary `nsc` compiler plugin.
 
 This distinction is useful later because Scala 3 explicitly dropped analyzer plugins as a plugin category.
+
+Why were those hooks useful? Scala 2 Paradise needed to participate in analyzer operations such as entering transformed stats and symbols, ensuring companions, and typing macro implementation bodies. Those operations belonged to the namer/typer lifecycle rather than to one isolated extra compiler phase. The Scala 2 implementation therefore registered hooks such as `pluginsEnterStats`, `pluginsEnterSym`, `pluginsEnsureCompanionObject`, and `pluginsTypedMacroBody`.
 
 ```scala
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
@@ -610,6 +615,45 @@ ResearchPlugin
 Scala 3 has **no analyzer-plugin category** corresponding directly to Scala 2 analyzer plugins.
 
 This means “research project” and “ResearchPlugin” are not synonyms. Macro-Paradise is certainly a research/experimental project, but its current compiler plugin is implemented using the Scala 3 **standard-plugin API**.
+
+# Why is a Scala 3 `StandardPlugin` enough for Macro-Paradise?
+
+The current experiment needs less power than a Scala 3 `ResearchPlugin` provides.
+
+Our required operation is narrowly:
+
+```text
+parse ordinary Scala source
+  -> rewrite the parsed untpd program
+  -> hand the result to the ordinary Scala typer
+```
+
+A `StandardPlugin` can contribute a `PluginPhase` and place it with `runsAfter` / `runsBefore` constraints. That is enough for us because we do **not** need to replace the parser, replace the typer, change typing rules, or rearrange the whole compiler pipeline. We want Dotty's normal typer to remain authoritative and to type the generated program exactly as if those definitions had been present in the parsed source.
+
+Choosing the smaller mechanism also has practical advantages:
+
+- the compiler's ordinary parser / typer semantics remain unchanged;
+- the integration surface is narrower and easier to reason about;
+- ordinary downstream compiler phases see normal typed output;
+- `StandardPlugin` works on the stable exact Scala releases we qualify (`3.3.8`, `3.8.4`, `3.9.0`);
+- Scala's `ResearchPlugin` API would give us unnecessary whole-pipeline power and is documented as nightly/snapshot-only.
+
+So the unusual part is **where the standard plugin phase runs**, not that we need a different plugin category.
+
+## Why was that not enough for Scala 2 Macro Paradise?
+
+Scala 2 Paradise's implementation problem was different. It needed to participate in the analyzer's namer/typer lifecycle itself: expand annotation-generated stats while symbols were being entered, enter generated symbols, create/ensure companions, and type macro implementation bodies. Those extension points lived inside the analyzer, not in one independent extra `PluginComponent` phase.
+
+That is why the Scala 2 plugin had `components = Nil` and instead registered `AnalyzerPlugin` and `MacroPlugin` hooks. The source contains hooks such as:
+
+```text
+pluginsEnterStats
+pluginsEnterSym
+pluginsEnsureCompanionObject
+pluginsTypedMacroBody
+```
+
+In the current Scala 3 design we deliberately avoid needing the equivalent of those analyzer hooks: we finish the syntactic transformation **before ordinary typer starts**, replace the compilation-unit's untyped tree, and let the stock typer perform all subsequent symbol entering and typing. That narrower contract is what makes `StandardPlugin` sufficient.
 
 # Where Macro-Paradise runs
 
