@@ -1,0 +1,17 @@
+{
+  "name": "macroparadise-talk-09-2026",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "verify:source": "node scripts/verify-deck.mjs",
+    "verify": "npm run verify:source && slidev build --base ./",
+    "build": "slidev build --base ./",
+    "export": "slidev export --output dist/macroparadise-talk-09-2026.pdf --executable-path /usr/bin/google-chrome"
+  },
+  "devDependencies": {
+    "@slidev/cli": "52.19.1",
+    "@slidev/theme-default": "0.25.0",
+    "playwright-chromium": "1.62.1"
+  }
+}

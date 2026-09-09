@@ -1,0 +1,185 @@
+:root {
+  --ink: #14213d;
+  --muted: #4b5d78;
+  --scala: #dc322f;
+  --blue: #0b67a3;
+  --teal: #0c7c86;
+  --paper: #ffffff;
+  --wash: #f3f7fb;
+  --line: #c8d4e3;
+}
+
+.slidev-layout {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  padding: 2.35rem 3.1rem;
+  font-size: 1.18rem;
+  line-height: 1.28;
+}
+
+.slidev-layout h1 {
+  color: var(--ink);
+  font-size: 2.05rem;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  margin: 0 0 1.1rem;
+}
+
+.slidev-layout h2 {
+  color: var(--blue);
+  font-size: 1.35rem;
+  margin: 0.7rem 0 0.45rem;
+}
+
+.slidev-layout p,
+.slidev-layout li {
+  color: var(--ink);
+}
+
+.slidev-layout ul,
+.slidev-layout ol {
+  margin-top: 0.45rem;
+}
+
+.slidev-layout li + li {
+  margin-top: 0.28rem;
+}
+
+.slidev-layout code {
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+.slidev-layout pre {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--blue);
+  border-radius: 0.45rem;
+  box-shadow: none;
+  font-size: 0.88rem;
+  line-height: 1.24;
+  margin: 0.7rem 0;
+  max-height: 82%;
+  overflow: hidden;
+}
+
+.slidev-layout pre code {
+  white-space: pre-wrap;
+}
+
+.slidev-layout.cover {
+  background: linear-gradient(105deg, #fff 0%, #fff 70%, #f3f7fb 70%, #eef4fa 100%);
+}
+
+.slidev-layout.cover h1 {
+  font-size: 3rem;
+  max-width: 78%;
+}
+
+.slidev-layout.section h1 {
+  font-size: 3rem;
+  max-width: 86%;
+}
+
+.slidev-layout.section {
+  background: var(--wash);
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 1.35rem;
+  max-width: 82%;
+}
+
+.kicker {
+  color: var(--scala);
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+  align-items: start;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.diagram {
+  background: var(--wash);
+  border: 0;
+  border-left: 6px solid var(--teal);
+  margin: 0;
+  max-height: none;
+  overflow: visible;
+  padding: 1rem 1.2rem;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  font-size: 1.08rem;
+  line-height: 1.42;
+  white-space: pre-wrap;
+}
+
+.callout {
+  border-left: 6px solid var(--scala);
+  background: #fff6f4;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+}
+
+.small {
+  font-size: 0.9rem;
+}
+
+.tiny-code pre {
+  font-size: 0.72rem;
+  line-height: 1.16;
+}
+
+.compact pre {
+  font-size: 0.79rem;
+  line-height: 1.18;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.route-key {
+  font-family: "JetBrains Mono", monospace;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 0.93rem;
+  width: 100%;
+}
+
+th {
+  background: var(--wash);
+  color: var(--blue);
+  text-align: left;
+}
+
+th, td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 0.55rem;
+  vertical-align: top;
+}
+
+a {
+  color: var(--blue);
+}
+
+.slidev-layout::after {
+  color: #73839a;
+  font-size: 0.7rem;
+}
