@@ -1,6 +1,10 @@
 # Can Scala 3 Have Macro Annotations Again? Rebuilding Macro Paradise
 
-https://www.meetup.com/london-scala/events/316153466/
+Slides: [PDF](macroparadise-talk-09-2026-literal-v8.pdf)
+
+Meetup: https://www.meetup.com/london-scala/events/316153466/
+
+Repositories:
 
 - https://github.com/DmytroMitin/macroparadise-scala3
 
@@ -12,7 +16,7 @@ https://www.meetup.com/london-scala/events/316153466/
 
 - https://github.com/DmytroMitin/scala-semantic-harness
 
-Templates:
+Templates (`sbt new ...`):
 
 - https://github.com/DmytroMitin/macroparadise-scala3.g8
 
