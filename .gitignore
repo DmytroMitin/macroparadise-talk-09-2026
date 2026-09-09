@@ -1,1 +1,6 @@
-.idea
+.idea/
+node_modules/
+dist/
+.slidev/
+tmp/
+*.log
