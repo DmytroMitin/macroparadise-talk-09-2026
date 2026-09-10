@@ -920,7 +920,7 @@ def addTerm(using Quotes)(
   Select.overloaded(left, "+", List(), List(right))
 ```
 
-Our typed quasiquotes at the same quoted-reflection layer:
+**Our typed quasiquotes at the same quoted-reflection layer:**
 
 ```scala
 def addTerm(using Quotes)(
@@ -978,7 +978,7 @@ def addTpdTree(
 
 ## Level 4: `dotty.tools.dotc.ast.untpd.Tree`
 
-Macro-Paradise operates here, before ordinary typer.
+**Macro-Paradise operates here, before ordinary typer.**
 
 The typed `qr"..."` family is therefore not directly the right tree authoring surface for this phase.
 
