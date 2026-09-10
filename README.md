@@ -22,13 +22,19 @@ Repositories:
 
 - https://github.com/DmytroMitin/scala-semantic-harness
 
-Templates (`sbt new ...`):
+Starters:
 
-- https://github.com/DmytroMitin/macroparadise-scala3.g8
+- `sbt new DmytroMitin/macroparadise-scala3.g8`
 
-- https://github.com/DmytroMitin/quasiquotes-scala3.g8
+   - https://github.com/DmytroMitin/macroparadise-scala3.g8
 
-- https://github.com/DmytroMitin/AUXify-scala3.g8
+- `sbt new DmytroMitin/quasiquotes-scala3.g8` 
+
+   - https://github.com/DmytroMitin/quasiquotes-scala3.g8
+
+- `sbt new DmytroMitin/AUXify-scala3.g8` 
+
+   - https://github.com/DmytroMitin/AUXify-scala3.g8
 
 > Scala 2's Macro Paradise allowed annotations to transform definitions and generate members, companions and other definitions before ordinary typechecking. Scala 3 has an experimental macro-annotation API, but newly generated definitions are visible only within the macro expansion.
 >
