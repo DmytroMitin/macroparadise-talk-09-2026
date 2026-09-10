@@ -1,10 +1,10 @@
 # Can Scala 3 Have Macro Annotations Again? Rebuilding Macro Paradise
 
-QR Code to this repo: [PNG](qr.png)
+Text: [MD](draft/draft_v8.md)
 
 Slides: [PDF](macroparadise-talk-09-2026-literal-v8.pdf)
 
-Draft (v. 8): [MD](draft/draft_v8.md)
+QR Code to this repo: [PNG](qr.png)
 
 Meetup: https://www.meetup.com/london-scala/events/316153466/
 
