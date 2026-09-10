@@ -36,10 +36,6 @@ Starters:
 
    - https://github.com/DmytroMitin/AUXify-scala3.g8
 
-QR Code to this repo: [PNG](qr.png)
-
-This repo card: [JPG](macroparadise-talk-repo-card.jpg) [PNG](macroparadise-talk-repo-card.png)
-
 Summary:
 
 > Scala 2's Macro Paradise allowed annotations to transform definitions and generate members, companions and other definitions before ordinary typechecking. Scala 3 has an experimental macro-annotation API, but newly generated definitions are visible only within the macro expansion.
@@ -50,6 +46,10 @@ Summary:
 > Macro-Paradise design with Quasiquotes and AUXify as the authoring and downstream
 > proof layers.
 
-Flyer:
+QR Code to this repo: [PNG](qr.png)
+
+![JPG](macroparadise-talk-repo-card.jpg)
+
+Event flyer:
 
 ![flyer](event-flyer.jpg)
