@@ -22,6 +22,8 @@ Repositories:
 
 - https://github.com/DmytroMitin/scala-semantic-harness
 
+- https://github.com/DmytroMitin/allow-experimental
+
 Starters:
 
 - `sbt new DmytroMitin/macroparadise-scala3.g8`
